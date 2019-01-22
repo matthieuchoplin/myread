@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import {Link, Route} from "react-router-dom";
+import Book from "./Book";
 
 class ListBooks extends Component {
   static propTypes = {
@@ -15,14 +16,13 @@ class ListBooks extends Component {
     }))
   };
   render() {
-    const { query } = this.state;
-    // const { books } = this.props;
+    const { books } = this.props;
 
-    // const showingBooks = query === ''
-    //   ? books
-    //   : books.filter((c) => (
-    //     c.title.toLowerCase().includes(query.toLowerCase())
-    //   ));
+    const showingBooks = this.state.query === ''
+      ? books
+      : books.filter((c) => (
+        c.title.toLowerCase().includes(this.state.query.toLowerCase())
+      ));
 
     return (
       <div className="app">
@@ -41,7 +41,7 @@ class ListBooks extends Component {
                 */}
                 <input type="text"
                        placeholder="Search by title or author"
-                       value={query}
+                       value={this.state.query}
                        onChange={(event) => this.updateQuery(event.target.value)}
                 />
 
@@ -49,6 +49,9 @@ class ListBooks extends Component {
             </div>
             <div className="search-books-results">
               <ol className="books-grid">
+                {showingBooks.map(book => (
+                  <li><Book book={book} onChangeShelf={(bookId, e) => this.props.onChangeShelf(bookId, e)}/></li>
+                ))}
               </ol>
             </div>
           </div>
