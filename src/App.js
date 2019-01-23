@@ -21,7 +21,7 @@ class BooksApp extends React.Component {
   handleChangeShelf = (bookId, e) => {
     let temp = this.state.books;
     const book = temp.filter(t => t.id === bookId)[0];
-    book.section = e.target.value;
+    book.shelf = e.target.value;
     BooksAPI.update(book, e.target.value).then(response => {
       this.setState({
         books: temp
@@ -46,23 +46,23 @@ class BooksApp extends React.Component {
                 <div>
                   <BookShelves
                     onChangeShelf={this.handleChangeShelf}
-                    sectionTitle="Currently Reading"
-                    section="currentlyReading"
+                    shelfTitle="Currently Reading"
+                    shelf="currentlyReading"
                     books={books.filter(
-                      book => book.section === "currentlyReading"
+                      book => book.shelf === "currentlyReading"
                     )}
                   />
                   <BookShelves
                     onChangeShelf={this.handleChangeShelf}
-                    sectionTitle="Want to read"
-                    section="wantToRead"
-                    books={books.filter(book => book.section === "wantToRead")}
+                    shelfTitle="Want to read"
+                    shelf="wantToRead"
+                    books={books.filter(book => book.shelf === "wantToRead")}
                   />
                   <BookShelves
                     onChangeShelf={this.handleChangeShelf}
-                    sectionTitle="Read"
-                    section="read"
-                    books={books.filter(book => book.section === "read")}
+                    shelfTitle="Read"
+                    shelf="read"
+                    books={books.filter(book => book.shelf === "read")}
                   />
                 </div>
               </div>
