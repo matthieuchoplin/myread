@@ -19,14 +19,23 @@ class BooksApp extends React.Component {
   }
 
   handleChangeShelf = (bookId, e) => {
-    let temp = this.state.books;
-    const book = temp.find(function(element) {return element.id === bookId});
-    book.shelf = e.target.value;
-    BooksAPI.update(book, e.target.value).then(response => {
-      this.setState(prevState => ({
-        books: prevState.books.filter(b => b.id !== book.id).concat(book)
-      }));
-    });
+    const value = e.target.value;
+    const book = this.state.books.find(function(element) {return element.id === bookId});
+    if (book === undefined) {
+      BooksAPI.get(bookId).then(newBook => {
+        newBook.shelf=value;
+        this.setState(prevState => ({
+          books: prevState.books.concat(newBook)
+        }));
+      })
+    } else {
+      book.shelf = value;
+      BooksAPI.update(book, value).then(response => {
+        this.setState(prevState => ({
+          books: prevState.books.filter(b => b.id !== book.id).concat(book)
+        }));
+      });
+    }
   };
 
   render() {
@@ -51,6 +60,7 @@ class BooksApp extends React.Component {
                 <div>
                   {shelves.map((shelf) =>
                     <BookShelves
+                      key={shelf.slug}
                       onChangeShelf={this.handleChangeShelf}
                       shelfTitle={shelf.title}
                       shelf={shelf.slug}
