@@ -2,34 +2,41 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Link, Route } from "react-router-dom";
 import Book from "./Book";
+import * as BooksAPI from "./BooksAPI";
 
 class ListBooks extends Component {
   static propTypes = {
     books: PropTypes.array.isRequired
   };
   state = {
-    query: ""
+    query: "",
+    books: []
   };
   updateQuery = query => {
-    this.setState(() => ({
-      query: query.trim()
-    }));
+    if (query.trim()) {
+      this.setState({query: query});
+      BooksAPI.search(query, 20).then((returnedBooks) => {
+          if (!returnedBooks.error) {
+            this.setState({
+              books: returnedBooks
+            })
+          }
+          else{
+            this.setState({
+              books: []
+            })
+          }
+        }
+      )
+    }
+    else{
+      this.setState({
+        query: ""
+      })
+    }
   };
+
   render() {
-    const { books } = this.props;
-
-    const showingBooks =
-      this.state.query === ""
-        ? books
-        : books.filter(
-            c =>
-              c.title.toLowerCase().includes(this.state.query.toLowerCase()) ||
-              c.authors
-                .join(" ")
-                .toLowerCase()
-                .includes(this.state.query.toLowerCase())
-          );
-
     return (
       <div className="app">
         <Route
@@ -60,7 +67,7 @@ class ListBooks extends Component {
               </div>
               <div className="search-books-results">
                 <ol className="books-grid">
-                  {showingBooks.map(book => (
+                  {this.state.books.map(book => (
                     <li key={book.id}>
                       <Book
                         book={book}
