@@ -20,17 +20,22 @@ class BooksApp extends React.Component {
 
   handleChangeShelf = (bookId, e) => {
     let temp = this.state.books;
-    const book = temp.filter(t => t.id === bookId)[0];
+    const book = temp.find(function(element) {return element.id === bookId});
     book.shelf = e.target.value;
     BooksAPI.update(book, e.target.value).then(response => {
-      this.setState({
-        books: temp
-      });
+      this.setState(prevState => ({
+        books: prevState.books.filter(b => b.id !== book.id).concat(book)
+      }));
     });
   };
 
   render() {
     const books = this.state.books;
+    const shelves = [
+      { title: 'Read', slug: 'read' },
+      { title: 'Want To Read', slug: 'wantToRead' },
+      { title: 'Currently Reading', slug: 'currentlyReading' }
+    ];
     return (
       <div>
         <ListBooks books={books} onChangeShelf={this.handleChangeShelf} />
@@ -44,26 +49,15 @@ class BooksApp extends React.Component {
               </div>
               <div className="list-books-content">
                 <div>
-                  <BookShelves
-                    onChangeShelf={this.handleChangeShelf}
-                    shelfTitle="Currently Reading"
-                    shelf="currentlyReading"
-                    books={books.filter(
-                      book => book.shelf === "currentlyReading"
-                    )}
-                  />
-                  <BookShelves
-                    onChangeShelf={this.handleChangeShelf}
-                    shelfTitle="Want to read"
-                    shelf="wantToRead"
-                    books={books.filter(book => book.shelf === "wantToRead")}
-                  />
-                  <BookShelves
-                    onChangeShelf={this.handleChangeShelf}
-                    shelfTitle="Read"
-                    shelf="read"
-                    books={books.filter(book => book.shelf === "read")}
-                  />
+                  {shelves.map((shelf) =>
+                    <BookShelves
+                      onChangeShelf={this.handleChangeShelf}
+                      shelfTitle={shelf.title}
+                      shelf={shelf.slug}
+                      books={books.filter(
+                        book => book.shelf === shelf.slug
+                      )}
+                    />)}
                 </div>
               </div>
               <div className="open-search">

@@ -5,7 +5,7 @@ class Book extends React.Component {
     const style = {
       width: 128,
       height: 193,
-      backgroundImage:  "url(" + this.props.book.imageLinks.thumbnail + ")"
+      backgroundImage:  this.props.book.imageLinks ? "url(" + this.props.book.imageLinks.thumbnail + ")" : "#"
     };
     return (
       <div className="book">
