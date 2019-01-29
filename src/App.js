@@ -48,7 +48,6 @@ class BooksApp extends React.Component {
     ];
     return (
       <div>
-        <ListBooks myBooks={books} onChangeShelf={this.handleChangeShelf} />
         <Route
           exact
           path="/"
@@ -76,6 +75,10 @@ class BooksApp extends React.Component {
               </div>
             </div>
           )}
+        />
+        <Route
+          exact path="/search"
+          render={() => <ListBooks myBooks={books} onChangeShelf={this.handleChangeShelf} />}
         />
       </div>
     );
