@@ -6,19 +6,22 @@ import * as BooksAPI from "./BooksAPI";
 
 class ListBooks extends Component {
   static propTypes = {
-    books: PropTypes.array.isRequired
+    myBooks: PropTypes.array.isRequired
   };
   state = {
     query: "",
     books: []
   };
-  updateQuery = query => {
+  updateQuery = (query, myBooks) => {
     if (query.trim()) {
       this.setState({query: query});
       BooksAPI.search(query, 20).then((returnedBooks) => {
           if (!returnedBooks.error) {
+            const booksWithShelves = this.addShelfToBooksFromApi(
+              returnedBooks, myBooks
+            );
             this.setState({
-              books: returnedBooks
+              books: booksWithShelves
             })
           }
           else{
@@ -31,10 +34,23 @@ class ListBooks extends Component {
     }
     else{
       this.setState({
-        query: ""
+        query: "",
+        books: []
       })
     }
   };
+
+  addShelfToBooksFromApi(returnedBooks, myBooks) {
+    return returnedBooks.map(book => {
+      book.shelf = "none";
+      myBooks.forEach(myBook => {
+        if (book.id === myBook.id) {
+          book.shelf = myBook.shelf;
+        }
+      });
+      return book;
+    });
+  }
 
   render() {
     return (
@@ -61,7 +77,7 @@ class ListBooks extends Component {
                     type="text"
                     placeholder="Search by title or author"
                     value={this.state.query}
-                    onChange={event => this.updateQuery(event.target.value)}
+                    onChange={event => this.updateQuery(event.target.value, this.props.myBooks)}
                   />
                 </div>
               </div>
