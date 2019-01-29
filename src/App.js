@@ -20,13 +20,14 @@ class BooksApp extends React.Component {
 
   handleChangeShelf = (bookId, e) => {
     const value = e.target.value;
-    const book = this.state.books.find(function(element) {return element.id === bookId});
+    const book = this.state.books.find(element => element.id === bookId);
     if (book === undefined) {
       BooksAPI.get(bookId).then(newBook => {
         newBook.shelf=value;
         this.setState(prevState => ({
           books: prevState.books.concat(newBook)
         }));
+        BooksAPI.update(newBook, value)
       })
     } else {
       book.shelf = value;
@@ -47,7 +48,7 @@ class BooksApp extends React.Component {
     ];
     return (
       <div>
-        <ListBooks books={books} onChangeShelf={this.handleChangeShelf} />
+        <ListBooks myBooks={books} onChangeShelf={this.handleChangeShelf} />
         <Route
           exact
           path="/"
