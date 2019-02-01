@@ -16,7 +16,7 @@ class ListBooks extends Component {
     if (query.trim()) {
       this.setState({query: query});
       BooksAPI.search(query, 20).then((returnedBooks) => {
-          if (!returnedBooks.error) {
+          if (!returnedBooks.error && this.state.query===query) {
             const booksWithShelves = this.addShelfToBooksFromApi(
               returnedBooks, myBooks
             );
